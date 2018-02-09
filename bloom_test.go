@@ -595,3 +595,65 @@ func TestTestLocations(t *testing.T) {
 		t.Errorf("%v should be in.", n4)
 	}
 }
+
+func TestEncodeAndDecode(t *testing.T) {
+	f := New(10, 1)
+	n1 := []byte("Love")
+	n2 := []byte("is")
+	n3 := []byte("in")
+	n4 := []byte("bloom")
+	f.Add(n1)
+	f.Add(n2)
+	f.Add(n3)
+	f.Add(n4)
+	if !f.Test(n1) || !f.Test(n2) || !f.Test(n3) || !f.Test(n4) {
+		t.Error("should be all in !")
+	}
+
+	encoded, err := f.GobEncode()
+	if err != nil {
+		t.Error("encode error: ", err.Error())
+	}
+
+	newF := &BloomFilter{}
+	err = newF.GobDecode(encoded)
+	if err != nil {
+        t.Error("decode error: ", err.Error())
+    }
+
+    if !f.Test(n1) || !f.Test(n2) || !f.Test(n3) || !f.Test(n4) {
+        t.Error("should be all in !")
+    }
+}
+
+func TestEncodeAndDecodeString(t *testing.T) {
+    f := New(10, 1)
+    n1 := []byte("Love")
+    n2 := []byte("is")
+    n3 := []byte("in")
+    n4 := []byte("bloom")
+    f.Add(n1)
+    f.Add(n2)
+    f.Add(n3)
+    f.Add(n4)
+    if !f.Test(n1) || !f.Test(n2) || !f.Test(n3) || !f.Test(n4) {
+        t.Error("should be all in !")
+    }
+
+    encoded, err := f.GobEncode()
+    if err != nil {
+        t.Error("encode error: ", err.Error())
+    }
+
+    encodedString := string(encoded)
+
+    newF := &BloomFilter{}
+    err = newF.GobDecode([]byte(encodedString))
+    if err != nil {
+        t.Error("decode error: ", err.Error())
+    }
+
+    if !f.Test(n1) || !f.Test(n2) || !f.Test(n3) || !f.Test(n4) {
+        t.Error("should be all in !")
+    }
+}
